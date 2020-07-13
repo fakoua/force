@@ -1,4 +1,4 @@
-import { readFileStr, walk } from "https://deno.land/std/fs/mod.ts"
+import { walk } from "https://deno.land/std/fs/mod.ts"
 import { join } from "https://deno.land/std/path/mod.ts"
 import { MenuModel } from "../../src/core/models/MenuModel.ts"
 
