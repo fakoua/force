@@ -10,6 +10,7 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="/admin/content/css/admin-materialize.min.css" type="text/css" rel="stylesheet"
         media="screen,projection" />
+    <link href="/admin/content/css/style.css" type="text/css" rel="stylesheet" media="screen,projection" />
 </head>
 
 <body class="has-fixed-sidenav">
@@ -188,19 +189,27 @@
         </ul>
     </header>
     <main>
-        <div class="container">
+        <div class="container fluid">
             {{body}}
         </div>
     </main>
     <footer class="page-footer light-blue darken-4">
         <div class="footer-copyright">
-            <div class="container">
-                Made by <a class="orange-text text-lighten-3" href="http://deno.land">Deno</a>
+            <div class="container fluid">
+                <div class="row">
+                    Made by <a class="orange-text text-lighten-3" href="http://deno.land">Deno</a>
+                </div>
             </div>
         </div>
     </footer>
     <!--  Scripts-->
     <script src="/admin/content/js/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js"
+        integrity="sha512-VZ6m0F78+yo3sbu48gElK4irv2dzPoep8oo9LEjxviigcnnnNvnTOJRSrIhuFk68FMLOpiNz+T77nNY89rnWDg=="
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dot/1.1.3/doT.min.js"
+        integrity="sha512-mv9iHAP8cyGYB1TX54qMIFYFbHpFoqo1StdcuIUoAxTXIiFfOu22TjJGrFMpY+iR4QmGkElLlHBVx5C+PiIdvg=="
+        crossorigin="anonymous"></script>
     <!-- Initialization script -->
     <script src="/admin/content/js/materialize.min.js"></script>
     <script>
@@ -211,5 +220,7 @@
         })(jQuery); // end of jQuery name space
 
     </script>
+    {{script}}
 </body>
+
 </html>

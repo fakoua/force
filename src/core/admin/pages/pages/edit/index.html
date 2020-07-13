@@ -1,0 +1,52 @@
+<!-- @force
+{
+    "title": "About Force",
+    "layout": "main",
+    "meta": [
+        { "Sameh": "Fakoua" },
+        { "name": "view", "content": "width=device-width, initial-scale=1.0"}
+    ]
+}
+-->
+<div class="container fluid">
+    <div class="row">
+        <div class="col s12">
+            <ul class="tabs">
+                <li class="tab col s3"><a href="#tab1" class="active">Content</a></li>
+                <li class="tab col s3"><a href="#tab2">Metadata</a></li>
+                <li class="tab col s3"><a href="#tab3">Options</a></li>
+            </ul>
+        </div>
+        <div id="tab1" class="col s12">
+            <br />
+            <form class="col s11">
+                <div class="row">
+                    <div class="input-field col s12">
+                        <input id="title" type="text" class="validate">
+                        <label for="title">Title</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div id="editor"></div>
+                </div>
+            </form>
+        </div>
+        <div id="tab2" class="col s12">Test 2</div>
+        <div id="tab3" class="col s12">Test 3</div>
+    </div>
+</div>
+
+<section name="script">
+    <script src="https://cdn.ckeditor.com/ckeditor5/20.0.0/classic/ckeditor.js"></script>
+    <script>
+        ClassicEditor
+            .create(document.querySelector('#editor'), {
+
+            })
+            .then(editor => {
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    </script>
+</section>

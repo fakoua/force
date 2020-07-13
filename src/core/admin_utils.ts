@@ -11,7 +11,7 @@ export function parseUrl(ctx: any): string[] {
 
 export async function getTheme(): Promise<string> {
     const themePath = join(Deno.cwd(), "src/core/admin/layout.html")
-    let result = await readFileStr(themePath)
+    const result = await readFileStr(themePath)
     return result
 }
 
@@ -30,7 +30,7 @@ export async function urlToFilePath(url: URL): Promise<string> {
     paths.shift()
 
     if (paths.length === 0) {
-        return join(root, '/index.html')
+        return join(root, "/index.html")
     }
 
     if (paths.length === 1) {
@@ -48,7 +48,7 @@ export async function urlToFilePath(url: URL): Promise<string> {
     })
     const checkFolder = join(root, `${res}/${last}`)
     const folderExist = await exists(checkFolder)
-    return folderExist ? join(checkFolder, 'index.html') : `${checkFolder}.html`
+    return folderExist ? join(checkFolder, "index.html") : `${checkFolder}.html`
 }
 
 export async function processFile(url: URL): Promise<PageModel> {
@@ -56,15 +56,26 @@ export async function processFile(url: URL): Promise<PageModel> {
     console.log(filePath)
     let content = await readFileStr(filePath)
     const regex: RegExp = /\<\!\-\-\s\@force(.*?)\-\-\>/gis
+    // const regexSections = /\<section name\=\"(.*?)\"\>(.*?)(\<\/section\>)/gis
+    const regexScript = /\<section name\=\"script\"\>(.*?)(\<\/section\>)/gis
     let json: any
-    let mt = regex.exec(content)
+    const mt = regex.exec(content)
     if (mt !== null) {
         json = JSON.parse(mt[1])
     }
 
+    const scriptSection = regexScript.exec(content)
+    
+    let script = ""
+    if (scriptSection !== null) {
+        script = scriptSection[1]
+        content = content.replace(regexScript, "")
+    }
+    
     return {
         content: content,
-        head: json
+        head: json,
+        script: script
     }
 }
 

@@ -29,7 +29,8 @@ export class Handlebars {
 
     public render(source: string, context?: Object): string {
         // TODO: use cashe
-        const template = HandlebarsJS.compile(source, this.config!.compilerOptions);
+        //  @ts-ignore
+        const template = HandlebarsJS.compile(source, this.config.compilerOptions);
         return template(context);
     }
 }

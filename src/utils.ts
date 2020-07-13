@@ -1,5 +1,5 @@
 import { join } from "https://deno.land/std/path/mod.ts"
-import { exists, readFileStr, walk } from "https://deno.land/std/fs/mod.ts"
+import { readFileStr, walk } from "https://deno.land/std/fs/mod.ts"
 import { PageModel } from "./core/models/PageModel.ts"
 
 export function parseUrl(ctx: any): string[] {
@@ -11,7 +11,7 @@ export function parseUrl(ctx: any): string[] {
 
 export async function getTheme(): Promise<string> {
     const themePath = join(Deno.cwd(), "src/cms/themes/newton/index.html")
-    let result = await readFileStr(themePath)
+    const result = await readFileStr(themePath)
     return result
 }
 
@@ -26,7 +26,7 @@ export async function getTheme(): Promise<string> {
 export async function urlToFilePath(url: URL): Promise<string> {
     const root = join(Deno.cwd(), "src/cms/pages")
 
-    let folders = walk(root, {
+    const folders = walk(root, {
         includeDirs: true, 
         includeFiles: false, 
     })
@@ -38,7 +38,6 @@ export async function urlToFilePath(url: URL): Promise<string> {
         paths.push("home")
     }
 
-    //const last = paths.pop()
     let res = ""
     paths.forEach(path => {
         res = `${res}/@PAT@${path}`
@@ -50,36 +49,24 @@ export async function urlToFilePath(url: URL): Promise<string> {
 
     let resultPath = ""
     for await (const folder of folders) {
-        //"C:@github@force@src@cms@pages@02.about@01.contact-us"
         let safePath = folder.path.replace(/\\/g, "@")
         safePath = safePath.replace(/\//g, "@")
 
-        let isMatch = (new RegExp(res)).test(safePath)
+        const isMatch = (new RegExp(res)).test(safePath)
         if (isMatch) {
             resultPath = folder.path
             break
         }
     }
-
-    //let isMatch = /^C:@github@force@src@cms@pages@\d\d\.about@\d\d\.contact-us$/.test("C:@github@force@src@cms@pages@02.about@01.contact-us")
-    
-    //const checkFolder = join(root, `${res}/${last}`)
-    //const folderExist = await exists(checkFolder)
-    //return folderExist ? join(checkFolder, 'index.html') : `${checkFolder}.html`
     return join(resultPath, "index.html")
 }
 
 export async function processFile(url: URL): Promise<PageModel> {
     const filePath = await urlToFilePath(url)
-    console.log(filePath)
-    let content = await readFileStr(filePath)
-    // content = Marked.parse(content)
-
+    const content = await readFileStr(filePath)
     const regex: RegExp = /\<\!\-\-\s\@force(.*?)\-\-\>/gis
-
     let json: any
-
-    let mt = regex.exec(content)
+    const mt = regex.exec(content)
     if (mt !== null) {
         json = JSON.parse(mt[1])
     }
@@ -93,6 +80,6 @@ export async function processFile(url: URL): Promise<PageModel> {
 export async function processMenu(): Promise<string> {
     const root = join(Deno.cwd(), "src/cms/themes")
     const menuPath = join(root, "/newton/modules/menu.html")
-    let content = await readFileStr(menuPath)
+    const content = await readFileStr(menuPath)
     return content
 }

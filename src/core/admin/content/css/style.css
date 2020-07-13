@@ -12,3 +12,53 @@
 .icon-block .material-icons {
 	font-size: inherit;
 }
+.container.fluid{
+  width: 100%;
+  max-width:initial;
+}
+.container.fluid > .row {
+  margin-left: 3px;
+  margin-right: 3px;
+}
+.container.fluid > .row > .col {
+  padding: 0;
+}
+
+/*Pages*/
+.collection-item.avatar.sub-menu {
+  margin-left:20px;
+  padding-top:2px;
+  padding-bottom:2px;
+}
+
+.collection-item.avatar.sub-menu span.title, .collection-item.avatar.sub-menu p {
+  font-size: 12px;
+}
+
+.collection-item.avatar.sub-menu i.av {
+  display: none !important;
+}
+
+/* ck editor */
+.ck.ck-content {
+  height: 400px;
+}
+.ck input.ck-input.ck-input-text {
+    box-shadow: var(--ck-inner-shadow),0 0;
+    background: var(--ck-color-input-background);
+    border: 1px solid var(--ck-color-input-border);
+    padding: var(--ck-spacing-extra-tiny) var(--ck-spacing-medium);
+    transition-property: box-shadow,border;
+    transition: .2s ease-in-out;
+
+    height: 500px;
+    width: inherit;
+    font-size: inherit;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+.ck input.ck-input.ck-input-text:focus {
+    border: var(--ck-focus-ring);
+    box-shadow: var(--ck-focus-outer-shadow),var(--ck-inner-shadow);
+}

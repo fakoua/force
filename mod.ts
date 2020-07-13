@@ -3,6 +3,8 @@ import { Session } from "https://deno.land/x/session/mod.ts";
 
 import * as utils from "./src/utils.ts"
 import * as adminUtils from "./src/core/admin_utils.ts"
+import * as pagesUtils from "./src/core/page_utils.ts"
+
 import { Handlebars } from "./src/handlebars/mod.ts"
 
 const handle = new Handlebars();
@@ -18,10 +20,9 @@ app.use(session.use()(session));
 
 router
     .all("/admin/login", async (ctx: Context) => {
-        console.log('login page')
         if (ctx.request.method === "POST") {
-            let b = await ctx.request.body()
-            let vl = b.value as URLSearchParams
+            const b = await ctx.request.body()
+            const vl = b.value as URLSearchParams
             const username = vl.get("username")
             const password = vl.get("password")
             if (username !== null && password !== null) {
@@ -32,7 +33,7 @@ router
                 }
             }
         }
-        let page = await adminUtils.processFile(ctx.request.url)
+        const page = await adminUtils.processFile(ctx.request.url)
         ctx.response.body = page.content
     });
 
@@ -46,9 +47,8 @@ app.use(async (ctx: Context, next: any) => {
         return;
     }
     if (pathname.startsWith("/admin")) {
-        let auth = await ctx.state.session.get("auth")
+        const auth = await ctx.state.session.get("auth")
         if (auth === undefined) {
-            console.log('redirected')
             ctx.response.redirect("/admin/login")
             return;
         }
@@ -80,23 +80,27 @@ app.use(async (ctx: Context, next: any) => {
 });
 
 router
+    .all("/admin/api/pages", async (ctx: Context) => {
+        const pages = await pagesUtils.getPages()
+        ctx.response.body = pages
+    });
+
+router
     .all("/admin/(.*)", async (ctx: Context) => {
+        console.log(atob(ctx.request.url.searchParams.get("pageId") ?? ""))
         let html = await adminUtils.getTheme()
-        let page = await adminUtils.processFile(ctx.request.url)
+        const page = await adminUtils.processFile(ctx.request.url)
 
         if (page.head === undefined) {
             ctx.response.body = page.content
-        }
-        else {
-            let model = {
+        } else {
+            const model = {
                 body: page.content,
-                title: page.head.title
+                title: page.head.title,
+                script: page.script
             }
 
             html = handle.render(html, model)
-            if (ctx.request.url.search === "?id=1") {
-                await ctx.state.session.set("auth", "tata")
-            }
             ctx.response.body = html
         }
     });
@@ -104,10 +108,10 @@ router
 router
     .all("/(.*)", async (ctx: Context) => {
         let html = await utils.getTheme()
-        let page = await utils.processFile(ctx.request.url)
+        const page = await utils.processFile(ctx.request.url)
         let menu = await utils.processMenu()
 
-        let menuModel = {
+        const menuModel = {
             menu: [
                 {
                     title: "Home",
@@ -123,7 +127,7 @@ router
         }
         menu = handle.render(menu, menuModel)
 
-        let model = {
+        const model = {
             body: page.content,
             title: page.head.title,
             menu: menu
@@ -144,7 +148,7 @@ app.addEventListener("listen", ({ hostname, port, secure }: any) => {
 // Listen to server errors
 app.addEventListener("error", (evt) => {
     // Will log the thrown error to the console.
-    //console.log(evt);
+    // console.log(evt);
 });
 
 app.use(router.routes());

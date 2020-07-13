@@ -9,7 +9,7 @@ Deno.test({
         const result = await utils.urlToFilePath(new URL("https://www.me.com"))
         assertEquals(result, expected)
     },
-});
+})
 
 Deno.test({
     name: "test_utils_urlToFilePath_02",
@@ -18,7 +18,7 @@ Deno.test({
         const result = await utils.urlToFilePath(new URL("https://www.me.com/"))
         assertEquals(result, expected)
     },
-});
+})
 
 Deno.test({
     name: "test_utils_urlToFilePath_03",
@@ -27,7 +27,7 @@ Deno.test({
         const result = await utils.urlToFilePath(new URL("https://www.me.com/home"))
         assertEquals(result, expected)
     },
-});
+})
 
 Deno.test({
     name: "test_utils_urlToFilePath_04",
@@ -36,7 +36,7 @@ Deno.test({
         const result = await utils.urlToFilePath(new URL("https://www.me.com/home/index"))
         assertEquals(result, expected)
     },
-});
+})
 
 Deno.test({
     name: "test_utils_urlToFilePath_05",
@@ -45,7 +45,7 @@ Deno.test({
         const result = await utils.urlToFilePath(new URL("https://www.me.com/afolder/index"))
         assertEquals(result, expected)
     },
-});
+})
 
 Deno.test({
     name: "test_utils_urlToFilePath_06",
@@ -54,7 +54,7 @@ Deno.test({
         const result = await utils.urlToFilePath(new URL("https://www.me.com/afolder"))
         assertEquals(result, expected)
     },
-});
+})
 
 Deno.test({
     name: "test_utils_urlToFilePath_07",
@@ -63,7 +63,7 @@ Deno.test({
         const result = await utils.urlToFilePath(new URL("https://www.me.com/afolder/afile"))
         assertEquals(result, expected)
     },
-});
+})
 
 Deno.test({
     name: "test_utils_urlToFilePath_09",
@@ -72,4 +72,4 @@ Deno.test({
         const result = await utils.urlToFilePath(new URL("https://www.me.com/a/b/c/d/e/f/g"))
         assertEquals(result, expected)
     },
-});
+})
