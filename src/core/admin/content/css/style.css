@@ -48,8 +48,7 @@
     background: var(--ck-color-input-background);
     border: 1px solid var(--ck-color-input-border);
     padding: var(--ck-spacing-extra-tiny) var(--ck-spacing-medium);
-    transition-property: box-shadow,border;
-    transition: .2s ease-in-out;
+    transition: box-shadow,border .2s ease-in-out;
 
     height: 500px;
     width: inherit;
