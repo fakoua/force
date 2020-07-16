@@ -1,15 +1,18 @@
 import { Application, Router, Context, send } from "https://deno.land/x/oak/mod.ts"
 import { Session } from "https://deno.land/x/session/mod.ts";
 
-import * as utils from "./src/utils.ts"
+import * as utils1 from "./src/utils.ts"
 import * as adminUtils from "./src/core/admin_utils.ts"
 import * as pagesUtils from "./src/core/page_utils.ts"
+import * as Pages from "./src/core/bll/Pages.ts"
+import * as AdminPages from "./src/core/bll/admin/Pages.ts"
+import * as PageApi from "./src/core/bll/admin/PageApi.ts"
 
 import { Handlebars } from "./src/handlebars/mod.ts"
 
-const handle = new Handlebars();
+const handle = new Handlebars()
 const app = new Application()
-const session = new Session({ framework: "oak" });
+const session = new Session({ framework: "oak" })
 await session.init();
 
 const router = new Router({
@@ -33,28 +36,28 @@ router
                 }
             }
         }
-        const page = await adminUtils.processFile(ctx.request.url)
+        const page = await adminUtils.getPage(ctx.request.url)
         ctx.response.body = page.content
     });
 
 
 // admin authentication
-app.use(async (ctx: Context, next: any) => {
-    const pathname = ctx.request.url.pathname.toLocaleLowerCase()
+// app.use(async (ctx: Context, next: any) => {
+//     const pathname = ctx.request.url.pathname.toLocaleLowerCase()
 
-    if (pathname.startsWith("/admin/login")) {
-        await next()
-        return;
-    }
-    if (pathname.startsWith("/admin")) {
-        const auth = await ctx.state.session.get("auth")
-        if (auth === undefined) {
-            ctx.response.redirect("/admin/login")
-            return;
-        }
-    }
-    await next()
-});
+//     if (pathname.startsWith("/admin/login")) {
+//         await next()
+//         return;
+//     }
+//     if (pathname.startsWith("/admin")) {
+//         const auth = await ctx.state.session.get("auth")
+//         if (auth === undefined) {
+//             ctx.response.redirect("/admin/login")
+//             return;
+//         }
+//     }
+//     await next()
+// });
 
 // static
 app.use(async (context, next: any) => {
@@ -86,31 +89,43 @@ router
     });
 
 router
-    .all("/admin/(.*)", async (ctx: Context) => {
-        console.log(atob(ctx.request.url.searchParams.get("pageId") ?? ""))
-        let html = await adminUtils.getTheme()
-        const page = await adminUtils.processFile(ctx.request.url)
+    .get("/admin/api/pages/get", async (ctx: Context) => {
+        const pageId = atob(ctx.request.url.searchParams.get("pageId") ?? "")
+        const page = await PageApi.getPage(pageId)
+        ctx.response.body = page
+    });
 
+router
+    .post("/admin/api/pages/post", async (ctx: Context) => {
+        const body = await ctx.request.body()
+        await adminUtils.savePage(body.value.data)
+        ctx.response.body = true
+    });
+
+router
+    .all("/admin/(.*)", async (ctx: Context) => {
+        const pageId = ctx.request.url.searchParams.get("pageId") ?? ""
+
+        const page = await AdminPages.getPage(ctx.request.url)
+        let html = await AdminPages.getTheme()
+        page.pageId = pageId
         if (page.head === undefined) {
             ctx.response.body = page.content
         } else {
             const model = {
-                body: page.content,
-                title: page.head.title,
-                script: page.script
+                page: page
             }
-
             html = handle.render(html, model)
+            html = handle.render(html, model) // for the body page.
             ctx.response.body = html
         }
     });
 
 router
     .all("/(.*)", async (ctx: Context) => {
-        let html = await utils.getTheme()
-        const page = await utils.processFile(ctx.request.url)
-        let menu = await utils.processMenu()
-
+        const page = await Pages.getPage(ctx.request.url)
+        let html = await Pages.getTheme()
+        let menu = await utils1.processMenu()
         const menuModel = {
             menu: [
                 {
@@ -126,14 +141,13 @@ router
             ]
         }
         menu = handle.render(menu, menuModel)
-
         const model = {
-            body: page.content,
-            title: page.head.title,
+            page: page,
             menu: menu
         }
 
         html = handle.render(html, model)
+        html = handle.render(html, model) // for the body page.
         ctx.response.body = html
     });
 
@@ -148,7 +162,7 @@ app.addEventListener("listen", ({ hostname, port, secure }: any) => {
 // Listen to server errors
 app.addEventListener("error", (evt) => {
     // Will log the thrown error to the console.
-    // console.log(evt);
+    console.log(evt.error);
 });
 
 app.use(router.routes());

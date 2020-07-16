@@ -1,21 +1,43 @@
 import { join } from "https://deno.land/std/path/mod.ts"
 import { readFileStr, walk } from "https://deno.land/std/fs/mod.ts"
-import { PageModel } from "./core/models/page/PageModel.ts"
-
-export function rootFolder(): string {
-    return Deno.cwd()
-}
-export function parseUrl(ctx: any): string[] {
-    const pathname = ctx.request.url.pathname as string
-    const paths = pathname.split("/")
-    paths.shift()
-    return paths
-}
+import { PageModel } from "../models/page/PageModel.ts"
+import * as utils from "../../utils.ts"
+import { SectionModel } from "../models/page/SectionModel.ts"
 
 export async function getTheme(): Promise<string> {
-    const themePath = join(Deno.cwd(), "src/cms/themes/newton/layout.html")
+    const themePath = join(utils.rootFolder(), "src/cms/themes/newton/layout.html")
     const result = await readFileStr(themePath)
     return result
+}
+
+export async function getPage(url: URL): Promise<PageModel> {
+    const filePath = await urlToFilePath(url)
+    let content = await readFileStr(filePath)
+    const regexForce: RegExp = /\<\!\-\-\s\@force(.*?)\-\-\>/gis
+    const regexSections = /\<section name\=\"(.*?)\"\>(.*?)(\<\/section\>)/gis
+
+    let json: any
+    const mt = regexForce.exec(content)
+
+    if (mt !== null) {
+        json = JSON.parse(mt[1])
+        content = content.replace(regexForce, "")
+    }
+
+    const matches = content.matchAll(regexSections)
+
+    content = content.replace(regexSections, "")
+    const sectionsMatch = Array.from(matches)
+    const sections: SectionModel = {}
+
+    sectionsMatch.forEach(sec => {
+        // sec[0]: whole section
+        // sec[1]: section name
+        // sec[2]: section content
+       sections[sec[1]] = sec[2]
+    })
+
+    return new PageModel(content, json, sections)
 }
 
 /**
@@ -26,8 +48,8 @@ export async function getTheme(): Promise<string> {
  *  - /company/about: root/company/about.md OR root/company/about/index.md
  * @param url requested url.
  */
-export async function urlToFilePath(url: URL): Promise<string> {
-    const root = join(Deno.cwd(), "src/cms/pages")
+async function urlToFilePath(url: URL): Promise<string> {
+    const root = join(utils.rootFolder(), "src/cms/pages")
 
     const folders = walk(root, {
         includeDirs: true, 
@@ -62,24 +84,4 @@ export async function urlToFilePath(url: URL): Promise<string> {
         }
     }
     return join(resultPath, "index.html")
-}
-
-export async function processFile(url: URL): Promise<PageModel> {
-    const filePath = await urlToFilePath(url)
-    const content = await readFileStr(filePath)
-    const regex: RegExp = /\<\!\-\-\s\@force(.*?)\-\-\>/gis
-    let json: any
-    const mt = regex.exec(content)
-    if (mt !== null) {
-        json = JSON.parse(mt[1])
-    }
-
-    return new PageModel(content, json, {})
-}
-
-export async function processMenu(): Promise<string> {
-    const root = join(Deno.cwd(), "src/cms/themes")
-    const menuPath = join(root, "/newton/modules/menu.html")
-    const content = await readFileStr(menuPath)
-    return content
 }

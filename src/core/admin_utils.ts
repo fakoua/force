@@ -1,13 +1,6 @@
 import { join } from "https://deno.land/std/path/mod.ts"
-import { exists, readFileStr } from "https://deno.land/std/fs/mod.ts"
-import { PageModel } from "./models/PageModel.ts"
-
-export function parseUrl(ctx: any): string[] {
-    const pathname = ctx.request.url.pathname as string
-    const paths = pathname.split("/")
-    paths.shift()
-    return paths
-}
+import { exists, readFileStr, writeFileStr } from "https://deno.land/std/fs/mod.ts"
+import { PageModel } from "./models/page/PageModel.ts"
 
 export async function getTheme(): Promise<string> {
     const themePath = join(Deno.cwd(), "src/core/admin/layout.html")
@@ -51,32 +44,65 @@ export async function urlToFilePath(url: URL): Promise<string> {
     return folderExist ? join(checkFolder, "index.html") : `${checkFolder}.html`
 }
 
-export async function processFile(url: URL): Promise<PageModel> {
-    const filePath = await urlToFilePath(url)
-    console.log(filePath)
+export async function getPage(url: URL | string): Promise<PageModel> {
+    let filePath: string
+
+    if (typeof url === "string") {
+        filePath = join(Deno.cwd(), "src/cms/pages")
+        filePath = join(filePath, url)
+        filePath = join(filePath, "index.html")
+    } else {
+        filePath = await urlToFilePath(url)
+    }
+
     let content = await readFileStr(filePath)
-    const regex: RegExp = /\<\!\-\-\s\@force(.*?)\-\-\>/gis
+    const regexForce: RegExp = /\<\!\-\-\s\@force(.*?)\-\-\>/gis
     // const regexSections = /\<section name\=\"(.*?)\"\>(.*?)(\<\/section\>)/gis
+    // TODO: consider make it dynamic
     const regexScript = /\<section name\=\"script\"\>(.*?)(\<\/section\>)/gis
+    const regexToolbar = /\<section name\=\"toolbar\"\>(.*?)(\<\/section\>)/gis
     let json: any
-    const mt = regex.exec(content)
+    const mt = regexForce.exec(content)
     if (mt !== null) {
         json = JSON.parse(mt[1])
+        content = content.replace(regexForce, "")
     }
 
     const scriptSection = regexScript.exec(content)
-    
+    const toolbarSection = regexToolbar.exec(content)
+
     let script = ""
     if (scriptSection !== null) {
         script = scriptSection[1]
         content = content.replace(regexScript, "")
     }
-    
-    return {
-        content: content,
-        head: json,
-        script: script
+
+    let toolbar = ""
+    if (toolbarSection !== null) {
+        toolbar = toolbarSection[1]
+        content = content.replace(regexToolbar, "")
     }
+    if (typeof url !== "string") {
+        console.log(url.pathname + toolbar)
+    }
+    
+    return new PageModel(content, json, {})
+}
+
+export async function savePage(model: PageModel): Promise<boolean> {
+    const path: string = atob(model.pageId ?? "")
+    let filePath = join(Deno.cwd(), "src/cms/pages")
+    filePath = join(filePath, path)
+    filePath = join(filePath, "index.html")
+    const force = JSON.stringify(model.head)
+    const fileContent = `
+<!-- @force
+${force}
+-->
+${model.content}
+    `
+    await writeFileStr(filePath, fileContent)
+    return true
 }
 
 export function validateAccount(username: string, password: string): boolean {

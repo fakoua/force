@@ -15,7 +15,7 @@ const DEFAULT_HANDLEBARS_CONFIG: HandlebarsConfig = {
     extname: ".hbs",
     layoutsDir: "layouts/",
     partialsDir: "partials/",
-    defaultLayout: "main",
+    defaultLayout: "layout",
     helpers: undefined,
     compilerOptions: {
         noEscape: true
@@ -31,6 +31,9 @@ export class Handlebars {
         // TODO: use cashe
         //  @ts-ignore
         const template = HandlebarsJS.compile(source, this.config.compilerOptions);
-        return template(context);
+        return template(context, {
+            allowProtoMethodsByDefault: true,
+            allowProtoPropertiesByDefault: true
+        });
     }
 }

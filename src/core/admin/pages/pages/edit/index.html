@@ -1,13 +1,62 @@
 <!-- @force
 {
-    "title": "About Force",
-    "layout": "main",
+    "pageTitle": "Page Edit",
+    "layout": "layout",
     "meta": [
         { "Sameh": "Fakoua" },
         { "name": "view", "content": "width=device-width, initial-scale=1.0"}
     ]
 }
 -->
+<section name="style">
+    <style>
+        i.handle {
+            cursor: grab;
+            color: gray;
+        }
+
+        #ul-meta li {
+            padding-top: 1px;
+            padding-bottom: 1px;
+            border-bottom: none;
+        }
+
+        #ul-meta div.col.s1 {
+            padding-top: 12px;
+        }
+
+        #ul-meta .row {
+            margin-bottom: 1px;
+        }
+
+        #ul-meta .input-field {
+            margin-bottom: 0;
+            margin-top: 0;
+        }
+
+        #ul-meta input {
+            margin-bottom: 0;
+        }
+
+        #ul-meta .btn-flat {
+            padding-left: 8px;
+            padding-right: 8px;
+        }
+
+        #ul-meta .hnd {
+            width: 28px;
+        }
+    </style>
+
+</section>
+<section name="toolbar">
+    <li>
+        <a class="waves-effect waves-light btn btn-flat indigo white-text" id="btn-save">
+            <i class="material-icons left">save</i>
+            Save
+        </a>
+    </li>
+</section>
 <div class="container fluid">
     <div class="row">
         <div class="col s12">
@@ -20,33 +69,165 @@
         <div id="tab1" class="col s12">
             <br />
             <form class="col s11">
+                <input type="hidden" id="page-id" name="pageId" value="{{page.pageId}}" />
                 <div class="row">
                     <div class="input-field col s12">
-                        <input id="title" type="text" class="validate">
-                        <label for="title">Title</label>
+                        <input id="page-title" type="text" class="validate" />
+                        <label for="page-title">Page Title</label>
                     </div>
                 </div>
                 <div class="row">
-                    <div id="editor"></div>
+                    <div class="input-field col s12">
+                        <input id="menu-title" type="text" class="validate" />
+                        <label for="menu-title">Menu Title</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <textarea id="editor">
+                    </textarea>
                 </div>
             </form>
         </div>
-        <div id="tab2" class="col s12">Test 2</div>
+        <div id="tab2" class="col s12">
+            <ul class="collection" id="ul-meta">
+
+            </ul>
+        </div>
         <div id="tab3" class="col s12">Test 3</div>
     </div>
 </div>
 
 <section name="script">
-    <script src="https://cdn.ckeditor.com/ckeditor5/20.0.0/classic/ckeditor.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Trumbowyg/2.21.0/trumbowyg.min.js"
+        integrity="sha512-l6MMck8/SpFCgbJnIEfVsWQ8MaNK/n2ppTiELW3I2BFY5pAm/WjkNHSt+2OD7+CZtygs+jr+dAgzNdjNuCU7kw=="
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.10.2/Sortable.min.js"
+        integrity="sha512-ELgdXEUQM5x+vB2mycmnSCsiDZWQYXKwlzh9+p+Hff4f5LA+uf0w2pOp3j7UAuSAajxfEzmYZNOOLQuiotrt9Q=="
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/uuid/8.2.0/uuidv4.min.js"></script>
     <script>
-        ClassicEditor
-            .create(document.querySelector('#editor'), {
 
+        function insertMeta(meta) {
+            let uid = uuidv4()
+            const template = `<li class="collection-item" id="${uid}">
+                    <div class="row">
+                        <div class="col s1 hnd">
+                            <i class="material-icons right handle">list</i>
+                        </div>
+                        <div class="input-field col s4">
+                            <input value="@key@" placeholder="Key" type="text" class="validate" data-metakey="true">
+                        </div>
+                        <div class="input-field col s4">
+                            <input value="@value@" placeholder="Value" type="text" class="validate" data-metavalue="true">
+                        </div>
+                        <div class="col s1">
+                            <a class="waves-effect waves-red btn-flat btn-small remove-meta" data-uid="${uid}"><i class="material-icons red-text">remove</i></a>
+                            <a class="waves-effect waves-blue btn-flat btn-small add-meta"><i class="material-icons green-text">add</i></a>
+                        </div>
+                    </div>
+                </li>`
+
+            let li = template.replace("@key@", meta.key)
+            li = li.replace("@value@", meta.value)
+
+            $('#ul-meta').append(li)
+            $('.add-meta').off('click')
+            $('.add-meta').on('click', (e) => {
+                e.preventDefault()
+                insertMeta({
+                    key: '',
+                    value: ''
+                })
             })
-            .then(editor => {
+
+            $('.remove-meta').off('click')
+            $('.remove-meta').on('click', (e) => {
+                e.preventDefault()
+                const uid = $(e.currentTarget).data('uid')
+                removeMeta(uid)
             })
-            .catch(error => {
-                console.error(error);
+        }
+
+        function removeMeta(uid) {
+            $(`#${uid}`).remove()
+        }
+
+        function buildMeta(meta) {
+            meta.forEach(element => {
+                insertMeta(element)
+            })
+        }
+
+        $(document).ready(() => {
+            window.editor = $('#editor').trumbowyg({
+                semantic: false
             });
+            window.editor.on('tbwinit', function (e) {
+                getPage()
+            })
+
+            new Sortable(document.getElementById("ul-meta"), {
+                animation: 150,
+                ghostClass: 'blue',
+                handle: '.handle'
+            });
+        })
+
+        function getPage() {
+            let pageId = encodeURIComponent($('#page-id').val())
+            axios.get(`/admin/api/pages/get?pageId=${pageId}`)
+                .then((res) => {
+                    $('#page-title').val(res.data.head.pageTitle)
+                    $('#menu-title').val(res.data.head.menuTitle)
+                    $('#editor').trumbowyg('html', res.data.content);
+                    buildMeta(res.data.head.meta)
+                })
+                .catch((err) => {
+
+                })
+        }
+
+        $('#btn-save').click((e) => {
+            e.preventDefault()
+            const pageId = $('#page-id').val()
+            const pageTitle = $('#page-title').val()
+            const menuTitle = $('#menu-title').val()
+            const content = $('#editor').trumbowyg('html')
+            const meta = getMeta()
+            axios.post("/admin/api/pages/post", {
+                data: {
+                    pageId: pageId,
+                    content: content,
+                    head: {
+                        pageTitle: pageTitle,
+                        menuTitle: menuTitle,
+                        meta: meta
+                    }
+                }
+            })
+                .then((res) => {
+
+                })
+                .catch((err) => {
+
+                })
+        })
+
+        function getMeta() {
+            const keys = $('input[data-metakey="true"')
+            const values = $('input[data-metavalue="true"')
+            const rtnVal = []
+            for (let index = 0; index < keys.length; index++) {
+                const key = $(keys[index]).val().trim()
+                const value = $(values[index]).val().trim() 
+                if (key !== '' && value !== '') {
+                    rtnVal.push({
+                        key: key,
+                        value: value
+                    })
+                }
+            }
+            return rtnVal
+        }
     </script>
 </section>

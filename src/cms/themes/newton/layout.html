@@ -4,12 +4,14 @@
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0" />
-  <title>Force - {{title}}</title>
+  {{page.metatags}}
+  <title>Force - {{page.head.pageTitle}}</title>
 
   <!-- CSS  -->
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link href="/themes/newton/css/materialize.min.css" type="text/css" rel="stylesheet" media="screen,projection" />
   <link href="/themes/newton/css/style.css" type="text/css" rel="stylesheet" media="screen,projection" />
+  {{page.sections.style}}
 </head>
 
 <body>
@@ -26,7 +28,7 @@
       <a href="#" data-target="nav-mobile" class="sidenav-trigger"><i class="material-icons">menu</i></a>
     </div>
   </nav>
-  {{body}}
+  {{page.content}}
   <footer class="page-footer light-blue darken-4">
     <div class="container">
       <div class="row">
@@ -62,7 +64,7 @@
   <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
   <script src="/themes/newton/js/materialize.min.js"></script>
   <script src="/themes/newton/js/init.js"></script>
-
+  {{page.sections.script}}
 </body>
 
 </html>

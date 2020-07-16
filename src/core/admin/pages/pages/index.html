@@ -1,7 +1,7 @@
 <!-- @force
 {
     "title": "About Force",
-    "layout": "main",
+    "layout": "layout",
     "meta": [
         { "Sameh": "Fakoua" },
         { "name": "view", "content": "width=device-width, initial-scale=1.0"}
@@ -21,24 +21,24 @@
 </div>
 <div class="row">
     <ul class="collection white" id="menu-items" style="display: none;">
-        {{~it:value:index}}
-    <li class="collection-item avatar {{? value.isSub }}sub-menu{{?}}">
+        @@~it:value:index$$
+    <li class="collection-item avatar @@? value.isSub $$sub-menu@@?$$">
             <i class="material-icons circle white black-text av">
-                {{? value.isHome }}
+                @@? value.isHome $$
                 home
-                {{??}}
+                @@??$$
                 text_snippet
-                {{?}}
+                @@?$$
             </i>
-            <a href="pages/edit?pageId={{=value.pageId}}">
-                <span class="title">{{=value.nameView}}</span>
+            <a href="pages/edit?pageId=@@=value.pageId$$">
+                <span class="title">@@=value.nameView$$</span>
             </a>
             <p>
-                {{=value.relativePath}}
+                @@=value.relativePath$$
             </p>
             <a href="#!" class="secondary-content red-text"><i class="material-icons del">delete</i></a>
         </li>
-        {{~}}
+        @@~$$
     </ul>
 </div>
 
