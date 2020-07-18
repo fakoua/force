@@ -25,8 +25,8 @@ app.use(session.use()(session))
 router
     .all("/admin/login", async (ctx: Context) => {
         if (ctx.request.method === "POST") {
-            const b = await ctx.request.body()
-            const vl = b.value as URLSearchParams
+            const b = ctx.request.body()
+            const vl = (await b.value) as URLSearchParams
             const username = vl.get("username")
             const password = vl.get("password")
             if (username !== null && password !== null) {
@@ -98,8 +98,8 @@ router
 
 router
     .post("/admin/api/pages/post", async (ctx: Context) => {
-        const body = await ctx.request.body()
-        await adminUtils.savePage(body.value.data)
+        const body = ctx.request.body()
+        await adminUtils.savePage( (await body.value).data)
         ctx.response.body = true
     })
 
