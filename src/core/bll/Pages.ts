@@ -3,6 +3,7 @@ import { readFileStr, walk } from "https://deno.land/std/fs/mod.ts"
 import { PageModel } from "../models/page/PageModel.ts"
 import * as utils from "../../utils.ts"
 import { SectionModel } from "../models/page/SectionModel.ts"
+import { PageHeadModel } from "../models/page/PageHeadModel.ts"
 
 export async function getTheme(): Promise<string> {
     const themePath = join(utils.rootFolder(), "src/cms/themes/newton/layout.html")
@@ -13,19 +14,12 @@ export async function getTheme(): Promise<string> {
 export async function getPage(url: URL): Promise<PageModel> {
     const filePath = await urlToFilePath(url)
     let content = await readFileStr(filePath)
-    const regexForce: RegExp = /\<\!\-\-\s\@force(.*?)\-\-\>/gis
     const regexSections = /\<section name\=\"(.*?)\"\>(.*?)(\<\/section\>)/gis
 
-    let json: any
-    const mt = regexForce.exec(content)
-
-    if (mt !== null) {
-        json = JSON.parse(mt[1])
-        content = content.replace(regexForce, "")
-    }
+    const pageHeader = getPageHeader(content)
+    content = content.replace(/\<\!\-\-\s\@force(.*?)\-\-\>/gis, "")
 
     const matches = content.matchAll(regexSections)
-
     content = content.replace(regexSections, "")
     const sectionsMatch = Array.from(matches)
     const sections: SectionModel = {}
@@ -37,7 +31,24 @@ export async function getPage(url: URL): Promise<PageModel> {
        sections[sec[1]] = sec[2]
     })
 
-    return new PageModel(content, json, sections)
+    return new PageModel(content, pageHeader, sections)
+}
+
+export function getPageHeader(content: string): PageHeadModel {
+    const regexForce: RegExp = /\<\!\-\-\s\@force(.*?)\-\-\>/gis
+    let json: any
+    const mt = regexForce.exec(content)
+
+    if (mt !== null) {
+        json = JSON.parse(mt[1])
+        content = content.replace(regexForce, "")
+        return json
+    }
+    return {
+        layout: "layout",
+        menuTitle: "",
+        pageTitle: ""
+    }
 }
 
 /**

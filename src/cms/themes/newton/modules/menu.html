@@ -1,3 +1,16 @@
 {{#each menu}}
-<li><a href="{{url}}"><i class="material-icons left">{{icon}}</i>{{title}}</a></li>
+    {{#unless hidden}}
+    <li>
+        <a href="{{#if children.length}}#{{else}}{{url}}{{/if}}" data-target="m-{{pageId}}" class="dropdown-button {{#if children.length}}dropdown-trigger{{/if}}"><i class="material-icons left">{{icon}}</i>{{menuTitle}}</a>
+        {{#if children.length }}
+        <ul id="m-{{pageId}}" class="dropdown-content">
+            {{#each children}}
+                {{#unless this.hidden}}
+                    <li><a href="{{this.url}}"><i class="material-icons left">{{this.icon}}</i>{{this.menuTitle}}</a></li>
+                {{/unless}}
+            {{/each}}
+        </ul>
+        {{/if}}
+    </li>
+    {{/unless}}
 {{/each}}

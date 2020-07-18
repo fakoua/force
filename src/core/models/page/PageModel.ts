@@ -23,24 +23,18 @@ export class PageModel {
                 switch (meta.key) {
                     case "charset":
                         result = `${result}<meta charset="${meta.value}" />\r\n`
-                        break;
+                        break
                     case "http-equiv":
                         // TODO: should be changed
                         result = `${result}<meta name="${meta.key}" content="${meta.value}" />\r\n`
-                        break;
+                        break
                     default:
                         result = `${result}<meta name="${meta.key}" content="${meta.value}" />\r\n`
-                        break;
+                        break
                 }
             })
             return result
         }
         return ""
     }
-    
-    public set metatags(v : string) {
-        // For handlebar
-    }
-    
-    
 }

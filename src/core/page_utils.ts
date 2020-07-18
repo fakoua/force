@@ -32,12 +32,12 @@ export async function getPages(): Promise<MenuModel[]> {
 
     menuItems = menuItems.sort((a, b) => {
         if (a.relativePath < b.relativePath) {
-            return -1;
+            return -1
           }
           if (a.relativePath > b.relativePath) {
             return 1
           }
-          return 0;
+          return 0
     })
     return menuItems
 }

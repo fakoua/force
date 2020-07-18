@@ -71,15 +71,29 @@
             <form class="col s11">
                 <input type="hidden" id="page-id" name="pageId" value="{{page.pageId}}" />
                 <div class="row">
-                    <div class="input-field col s12">
+                    <div class="input-field col s10">
                         <input id="page-title" type="text" class="validate" />
                         <label for="page-title">Page Title</label>
                     </div>
+                    <div class="input-field col s2">
+                        <div class="switch">
+                            <label>
+                                Hidden
+                                <input type="checkbox" id="visibile">
+                                <span class="lever"></span>
+                                Visibile
+                            </label>
+                        </div>
+                    </div>
                 </div>
                 <div class="row">
-                    <div class="input-field col s12">
+                    <div class="input-field col s10">
                         <input id="menu-title" type="text" class="validate" />
                         <label for="menu-title">Menu Title</label>
+                    </div>
+                    <div class="input-field col s2">
+                        <input id="icon" type="text" class="validate" />
+                        <label for="icon">Icon</label>
                     </div>
                 </div>
                 <div class="row">
@@ -179,19 +193,29 @@
                 .then((res) => {
                     $('#page-title').val(res.data.head.pageTitle)
                     $('#menu-title').val(res.data.head.menuTitle)
-                    $('#editor').trumbowyg('html', res.data.content);
+                    $('#icon').val(res.data.head.icon)
+                    $('#visibile').prop("checked", !res.data.head.hidden)
+                    $('#editor').trumbowyg('html', res.data.content)
                     buildMeta(res.data.head.meta)
+                    M.updateTextFields()
+                    hideLoader()
                 })
                 .catch((err) => {
+
+                })
+                .then(() => {
 
                 })
         }
 
         $('#btn-save').click((e) => {
             e.preventDefault()
+            showLoader()
             const pageId = $('#page-id').val()
             const pageTitle = $('#page-title').val()
             const menuTitle = $('#menu-title').val()
+            const icon = $('#icon').val()
+            const hidden = !$('#visibile').prop("checked")
             const content = $('#editor').trumbowyg('html')
             const meta = getMeta()
             axios.post("/admin/api/pages/post", {
@@ -201,7 +225,9 @@
                     head: {
                         pageTitle: pageTitle,
                         menuTitle: menuTitle,
-                        meta: meta
+                        meta: meta,
+                        icon: icon,
+                        hidden: hidden
                     }
                 }
             })
@@ -211,6 +237,9 @@
                 .catch((err) => {
 
                 })
+                .then(() => {
+                    hideLoader()
+                })
         })
 
         function getMeta() {
@@ -219,7 +248,7 @@
             const rtnVal = []
             for (let index = 0; index < keys.length; index++) {
                 const key = $(keys[index]).val().trim()
-                const value = $(values[index]).val().trim() 
+                const value = $(values[index]).val().trim()
                 if (key !== '' && value !== '') {
                     rtnVal.push({
                         key: key,

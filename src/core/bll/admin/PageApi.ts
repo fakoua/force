@@ -10,8 +10,19 @@ export async function getTheme(): Promise<string> {
 }
 
 export async function getPage(pageId: string): Promise<PageModel> {
-    let filePath: string
+    if (pageId === "") {
+        // Create new page
+        return new PageModel("", {
+            layout: "layout",
+            menuTitle: "",
+            pageTitle: "",
+            hidden: false, 
+            icon: "",
+            meta: []
+        })
+    }
 
+    let filePath: string
     filePath = join(Deno.cwd(), "src/cms/pages")
     filePath = join(filePath, pageId)
     filePath = join(filePath, "index.html")

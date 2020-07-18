@@ -8,40 +8,38 @@
     ]
 }
 -->
-<div class="fixed-action-btn">
-    <a class="btn-floating btn-large red">
-        <i class="large material-icons">menu</i>
-    </a>
-    <ul>
-        <li><a class="btn-floating red"><i class="material-icons">insert_chart</i></a></li>
-        <li><a class="btn-floating yellow darken-1"><i class="material-icons">format_quote</i></a></li>
-        <li><a class="btn-floating green"><i class="material-icons">publish</i></a></li>
-        <li><a class="btn-floating blue"><i class="material-icons">attach_file</i></a></li>
-    </ul>
+<section name="toolbar">
+    <li>
+        <a class="waves-effect waves-light btn btn-flat indigo white-text" href="/admin/pages/edit">
+            <i class="material-icons left">add</i>
+            New Page
+        </a>
+    </li>
+</section>
+<div class="container fluid">
+    <div class="row">
+        <ul class="collection white" id="menu-items" style="display: none;">
+            @@~it:value:index$$
+            <li class="collection-item avatar @@? value.isSub $$sub-menu@@?$$">
+                <i class="material-icons circle white black-text av">
+                    @@? value.isHome $$
+                    home
+                    @@??$$
+                    text_snippet
+                    @@?$$
+                </i>
+                <a href="pages/edit?pageId=@@=value.pageId$$">
+                    <span class="title">@@=value.menuTitle$$</span>
+                </a>
+                <p>
+                    @@=value.relativePath$$
+                </p>
+                <a href="#!" class="secondary-content red-text"><i class="material-icons del">delete</i></a>
+            </li>
+            @@~$$
+        </ul>
+    </div>
 </div>
-<div class="row">
-    <ul class="collection white" id="menu-items" style="display: none;">
-        @@~it:value:index$$
-    <li class="collection-item avatar @@? value.isSub $$sub-menu@@?$$">
-            <i class="material-icons circle white black-text av">
-                @@? value.isHome $$
-                home
-                @@??$$
-                text_snippet
-                @@?$$
-            </i>
-            <a href="pages/edit?pageId=@@=value.pageId$$">
-                <span class="title">@@=value.nameView$$</span>
-            </a>
-            <p>
-                @@=value.relativePath$$
-            </p>
-            <a href="#!" class="secondary-content red-text"><i class="material-icons del">delete</i></a>
-        </li>
-        @@~$$
-    </ul>
-</div>
-
 <section name="script">
     <script>
         axios.get("/admin/api/pages")
@@ -51,9 +49,14 @@
                 let html = tempFn(res.data)
                 $('#menu-items').html(html)
                 $('#menu-items').show()
+                console.log('done menu')
             })
             .catch((err) => {
                 console.log(err)
+            })
+            .then(() => {
+                console.log('loader hidden')
+                hideLoader()
             })
     </script>
 </section>

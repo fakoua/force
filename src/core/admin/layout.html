@@ -4,13 +4,15 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0" />
-    <title>Force - {{page.head.title}}</title>
+    <title>Force - {{page.head.pageTitle}}</title>
 
     <!-- CSS  -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="/admin/content/css/admin-materialize.min.css" type="text/css" rel="stylesheet"
         media="screen,projection" />
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Trumbowyg/2.21.0/ui/trumbowyg.min.css" integrity="sha512-XjpikIIW1P7jUS8ZWIznGs9KHujZQxhbnEsqMVQ5GBTTRmmJe32+ULipOxFePB8F8j9ahKmCjyJJ22VNEX60yg==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Trumbowyg/2.21.0/ui/trumbowyg.min.css"
+        integrity="sha512-XjpikIIW1P7jUS8ZWIznGs9KHujZQxhbnEsqMVQ5GBTTRmmJe32+ULipOxFePB8F8j9ahKmCjyJJ22VNEX60yg=="
+        crossorigin="anonymous" />
     <link href="/admin/content/css/style.css" type="text/css" rel="stylesheet" media="screen,projection" />
     {{page.sections.style}}
 </head>
@@ -23,7 +25,8 @@
                     <ul id="nav-mobile" class="right" style="margin-top: 15px;">
                         {{page.sections.toolbar}}
                     </ul>
-                    <a href="#!" data-target="sidenav-left" class="sidenav-trigger left"><i class="material-icons black-text">menu</i></a>
+                    <a href="#!" data-target="sidenav-left" class="sidenav-trigger left"><i
+                            class="material-icons black-text">menu</i></a>
                 </div>
             </nav>
         </div>
@@ -115,7 +118,22 @@
         </ul>
     </header>
     <main>
-        <div class="container fluid">
+        <div class="container fluid" id="content-container">
+            <div class="preloader-background">
+                <div class="preloader-wrapper big active">
+                    <div class="spinner-layer spinner-blue-only">
+                        <div class="circle-clipper left">
+                            <div class="circle"></div>
+                        </div>
+                        <div class="gap-patch">
+                            <div class="circle"></div>
+                        </div>
+                        <div class="circle-clipper right">
+                            <div class="circle"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
             {{page.content}}
         </div>
     </main>
@@ -133,7 +151,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js"
         integrity="sha512-VZ6m0F78+yo3sbu48gElK4irv2dzPoep8oo9LEjxviigcnnnNvnTOJRSrIhuFk68FMLOpiNz+T77nNY89rnWDg=="
         crossorigin="anonymous"></script>
-        <script src="/admin/content/js/doT.js"></script>
+    <script src="/admin/content/js/doT.js"></script>
     <!-- Initialization script -->
     <script src="/admin/content/js/materialize.min.js"></script>
     <script>
@@ -143,6 +161,19 @@
             }); // end of document ready
         })(jQuery); // end of jQuery name space
 
+        function hideLoader() {
+            $('#content-container').css('filter', 'blur(0px)')
+            $('.preloader-background').delay(200).fadeOut(600);
+            $('.preloader-wrapper')
+                .delay(200)
+                .fadeOut();
+        }
+
+        function showLoader() {
+            $('#content-container').css('filter', 'blur(1px)')
+            $('.preloader-background').fadeIn(100);
+            $('.preloader-wrapper').fadeIn(100);
+        }
     </script>
     {{page.sections.script}}
 </body>

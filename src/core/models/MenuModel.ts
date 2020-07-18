@@ -5,5 +5,11 @@ export interface MenuModel {
     nameView: string,
     isHome: boolean,
     isSub: boolean,
-    pageId: string
+    pageId: string,
+    pageTitle?: string,
+    menuTitle?: string,
+    hidden?: boolean,
+    icon?: string,
+    url?: string,
+    children?: MenuModel[]
 }
