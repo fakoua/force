@@ -1,5 +1,5 @@
 import { join } from "https://deno.land/std/path/mod.ts"
-import { readFileStr, walk } from "https://deno.land/std/fs/mod.ts"
+import { readFileStr, walk } from "https://deno.land/std@0.61.0/fs/mod.ts"
 import { PageModel } from "./core/models/page/PageModel.ts"
 
 export function rootFolder(): string {

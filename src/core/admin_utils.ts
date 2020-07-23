@@ -1,5 +1,5 @@
 import { join } from "https://deno.land/std/path/mod.ts"
-import { exists, readFileStr, writeFileStr } from "https://deno.land/std/fs/mod.ts"
+import { exists, readFileStr, writeFileStr } from "https://deno.land/std@0.61.0/fs/mod.ts"
 import { PageModel } from "./models/page/PageModel.ts"
 
 export async function getTheme(): Promise<string> {
