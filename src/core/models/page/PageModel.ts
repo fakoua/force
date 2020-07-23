@@ -7,7 +7,10 @@ export class PageModel {
         this.head = head ?? {
             layout: "layout",
             pageTitle: "Force",
-            menuTitle: "Force"
+            menuTitle: "Force",
+            hidden: false, 
+            icon: "",
+            meta: []
         }
         this.sections = sections
     }

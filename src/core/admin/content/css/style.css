@@ -38,21 +38,6 @@
 	bottom: 0;	
 }
 
-/*Pages*/
-.collection-item.avatar.sub-menu {
-  margin-left:20px;
-  padding-top:2px;
-  padding-bottom:2px;
-}
-
-.collection-item.avatar.sub-menu span.title, .collection-item.avatar.sub-menu p {
-  font-size: 12px;
-}
-
-.collection-item.avatar.sub-menu i.av {
-  display: none !important;
-}
-
 /* ck editor */
 .trumbowyg-box.trumbowyg {
   background-color: white;

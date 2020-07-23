@@ -47,7 +47,10 @@ export function getPageHeader(content: string): PageHeadModel {
     return {
         layout: "layout",
         menuTitle: "",
-        pageTitle: ""
+        pageTitle: "",
+        hidden: false, 
+        icon: "",
+        meta: []
     }
 }
 

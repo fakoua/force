@@ -4,7 +4,7 @@ export interface PageHeadModel {
     pageTitle: string,
     menuTitle: string,
     layout: string,
-    meta?: Array<MetatagModel>
-    hidden?: boolean,
-    icon?: string
+    meta: Array<MetatagModel>
+    hidden: boolean,
+    icon: string
 }

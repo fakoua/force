@@ -16,12 +16,65 @@
         </a>
     </li>
 </section>
+<section name="style">
+    <style>
+        .menu-items {
+            margin: .5rem 0 1rem 0;
+            border: 1px solid #e0e0e0;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .menu-items .menu-item {
+            background-color: #fff;
+            line-height: 1.5rem;
+            padding: 5px 20px;
+            padding-left: 60px;
+            margin: 0;
+            border-bottom: 1px solid #e0e0e0
+        }
+
+        .menu-items .menu-item a {
+            font-size: 16px;
+        }
+
+        .menu-items .menu-item p {
+            margin: 0;
+            font-size: 14px;
+        }
+
+        .menu-items.child .menu-item {
+            padding-left: 30px;
+        }
+
+        i.av {
+            position: absolute;
+            font-size: 36px;
+            overflow: hidden;
+            left: 15px;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        .menu-items .menu-item .action {
+            position: absolute;
+            overflow: hidden;
+            right: 15px;
+            display: inline-block;
+            vertical-align: top;
+        }
+
+        .menu-items.child .menu-item .action {
+            right: 30px;
+        }
+    </style>
+</section>
 <div class="container fluid">
     <div class="row">
-        <ul class="collection white" id="menu-items" style="display: none;">
+        <div class="menu-items" id="menu-items" style="display: none;">
             @@~it:value:index$$
-            <li class="collection-item avatar @@? value.isSub $$sub-menu@@?$$">
-                <i class="material-icons circle white black-text av">
+            <div class="menu-item" data-key="@@=value.pageId$$">
+                <i class="material-icons white black-text av">
                     @@? value.isHome $$
                     home
                     @@??$$
@@ -31,16 +84,34 @@
                 <a href="pages/edit?pageId=@@=value.pageId$$">
                     <span class="title">@@=value.menuTitle$$</span>
                 </a>
+                <a href="#!" class="action red-text"><i class="material-icons del">delete</i></a>
                 <p>
                     @@=value.relativePath$$
                 </p>
-                <a href="#!" class="secondary-content red-text"><i class="material-icons del">delete</i></a>
-            </li>
+                @@? value.children.length !== 0 $$
+                <div class="menu-items child">
+                    @@~value.children:child:idx$$
+                    <div class="menu-item" data-key="@@=value.pageId$$">
+                        <a href="pages/edit?pageId=@@=value.pageId$$">
+                            <span class="title">@@=child.menuTitle$$</span>
+                        </a>
+                        <a href="#!" class="action red-text"><i class="material-icons del">delete</i></a>
+                        <p>
+                            @@=child.relativePath$$
+                        </p>
+                    </div>
+                    @@~$$
+                </div>
+                @@?$$
+            </div>
             @@~$$
-        </ul>
+        </div>
     </div>
 </div>
 <section name="script">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.10.2/Sortable.min.js"
+        integrity="sha512-ELgdXEUQM5x+vB2mycmnSCsiDZWQYXKwlzh9+p+Hff4f5LA+uf0w2pOp3j7UAuSAajxfEzmYZNOOLQuiotrt9Q=="
+        crossorigin="anonymous"></script>
     <script>
         axios.get("/admin/api/pages")
             .then((res) => {
@@ -49,13 +120,39 @@
                 let html = tempFn(res.data)
                 $('#menu-items').html(html)
                 $('#menu-items').show()
-                console.log('done menu')
+
+                let nestedSortables = [].slice.call(document.querySelectorAll('.menu-items'));
+                // Loop through each nested sortable element
+                for (var i = 0; i < nestedSortables.length; i++) {
+                    new Sortable(nestedSortables[i], {
+                        animation: 150,
+                        fallbackOnBody: false,
+                        swapThreshold: 0.65,
+
+                        // Element dragging ended
+                        onEnd: function (/**Event*/evt) {
+                            var itemEl = evt.item;  // dragged HTMLElement
+                            evt.to;    // target list
+                            evt.from;  // previous list
+                            evt.oldIndex;  // element's old index within old parent
+                            evt.newIndex;  // element's new index within new parent
+                            evt.oldDraggableIndex; // element's old index within old parent, only counting draggable elements
+                            evt.newDraggableIndex; // element's new index within new parent, only counting draggable elements
+                            evt.clone // the clone element
+                            evt.pullMode;  // when item is in another sortable: `"clone"` if cloning, `true` if moving
+                            console.log('onEnd', evt)
+                        }
+                    });
+                }
+
+                // new Sortable(document.getElementById("menu-items"), {
+                //          animation: 150
+                //      });
             })
             .catch((err) => {
                 console.log(err)
             })
             .then(() => {
-                console.log('loader hidden')
                 hideLoader()
             })
     </script>

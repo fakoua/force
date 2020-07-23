@@ -3,7 +3,6 @@ import { Session } from "https://deno.land/x/session/mod.ts"
 
 import * as utils1 from "./src/utils.ts"
 import * as adminUtils from "./src/core/admin_utils.ts"
-import * as pagesUtils from "./src/core/page_utils.ts"
 import * as Pages from "./src/core/bll/Pages.ts"
 import * as AdminPages from "./src/core/bll/admin/Pages.ts"
 import * as PageApi from "./src/core/bll/admin/PageApi.ts"
@@ -85,7 +84,7 @@ app.use(async (ctx: Context, next: any) => {
 
 router
     .all("/admin/api/pages", async (ctx: Context) => {
-        const pages = await Menu.getPages()
+        const pages = await Menu.getMenuItems()
         ctx.response.body = pages
     })
 

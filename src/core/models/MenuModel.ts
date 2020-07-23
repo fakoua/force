@@ -4,12 +4,11 @@ export interface MenuModel {
     name: string,
     nameView: string,
     isHome: boolean,
-    isSub: boolean,
     pageId: string,
-    pageTitle?: string,
-    menuTitle?: string,
+    pageTitle: string,
+    menuTitle: string,
     hidden?: boolean,
-    icon?: string,
-    url?: string,
-    children?: MenuModel[]
+    icon: string,
+    url: string,
+    children: MenuModel[]
 }
