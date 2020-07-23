@@ -61,6 +61,7 @@ router
 
 // static
 app.use(async (context, next: any) => {
+    console.log("------------------------------------------------------------------------")
     if (context.request.url.pathname.startsWith("/themes")) {
         await send(context, context.request.url.pathname, {
             root: `${Deno.cwd()}/src/cms/`,
@@ -98,8 +99,21 @@ router
 router
     .post("/admin/api/pages/post", async (ctx: Context) => {
         const body = ctx.request.body()
-        await adminUtils.savePage( (await body.value).data)
+        await adminUtils.savePage((await body.value).data)
         ctx.response.body = true
+    })
+
+router
+    .post("/admin/api/pages/rename", async (ctx: Context) => {
+        const body = ctx.request.body()
+        const data = (await body.value).renames
+        console.log(data)
+        for (let i = 0; i < data.length; i++) {
+            console.log(data[i][0], data[i][1])
+            await Deno.rename(data[i][0], data[i][1])
+        }
+        const pages = await Menu.getMenuItems()
+        ctx.response.body = pages
     })
 
 router

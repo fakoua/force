@@ -20,11 +20,10 @@ export async function getMenuItems(path?: string): Promise<MenuModel[]> {
         const fullPath = folder.path
         const relativePath = folder.path.replace(rootFolder, "")
         const name = folder.name
-        const nameView = name.substring(3)
+        const nameView = name.replace(/\d\d\./gm, "")
         const url = "/" + relativePath.replace(/\d\d\./gm, "").replace(/\\/gm, "/")
-        // console.log("Path: ",  path ?? "EMPTY", "   Root: " , root, "   Relative: ", relativePath, "   FullPath: ", fullPath)
+        const relativePathView = relativePath.replace(/\d\d\./gm, "").replace(/\\/, " \\ ")
         if (root !== fullPath) {
-
             const content = await readFileStr(join(fullPath, "index.html"))
             const pageHeader = Pages.getPageHeader(content)
             const children = await getMenuItems(fullPath)
@@ -33,6 +32,7 @@ export async function getMenuItems(path?: string): Promise<MenuModel[]> {
                 name: name,
                 nameView: nameView,
                 relativePath: relativePath,
+                relativePathView: relativePathView,
                 isHome: nameView === "home",
                 pageId: encodeURIComponent(btoa(relativePath)),
                 hidden: pageHeader.hidden ?? false,

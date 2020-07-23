@@ -86,18 +86,18 @@
                 </a>
                 <a href="#!" class="action red-text"><i class="material-icons del">delete</i></a>
                 <p>
-                    @@=value.relativePath$$
+                    @@=value.relativePathView$$
                 </p>
                 @@? value.children.length !== 0 $$
-                <div class="menu-items child">
+                <div class="menu-items child" data-key="@@=value.pageId$$">
                     @@~value.children:child:idx$$
-                    <div class="menu-item" data-key="@@=value.pageId$$">
-                        <a href="pages/edit?pageId=@@=value.pageId$$">
+                    <div class="menu-item" data-key="@@=child.pageId$$">
+                        <a href="pages/edit?pageId=@@=child.pageId$$">
                             <span class="title">@@=child.menuTitle$$</span>
                         </a>
                         <a href="#!" class="action red-text"><i class="material-icons del">delete</i></a>
                         <p>
-                            @@=child.relativePath$$
+                            @@=child.relativePathView$$
                         </p>
                     </div>
                     @@~$$
@@ -113,10 +113,18 @@
         integrity="sha512-ELgdXEUQM5x+vB2mycmnSCsiDZWQYXKwlzh9+p+Hff4f5LA+uf0w2pOp3j7UAuSAajxfEzmYZNOOLQuiotrt9Q=="
         crossorigin="anonymous"></script>
     <script>
+        function swap(input, index_A, index_B) {
+            let temp = input[index_A];
+
+            input[index_A] = input[index_B];
+            input[index_B] = temp;
+        }
+
         axios.get("/admin/api/pages")
             .then((res) => {
                 const template = $('#menu-items').html()
                 const tempFn = doT.compile(template)
+                window.menuItems = res.data
                 let html = tempFn(res.data)
                 $('#menu-items').html(html)
                 $('#menu-items').show()
@@ -140,14 +148,44 @@
                             evt.newDraggableIndex; // element's new index within new parent, only counting draggable elements
                             evt.clone // the clone element
                             evt.pullMode;  // when item is in another sortable: `"clone"` if cloning, `true` if moving
-                            console.log('onEnd', evt)
+                            if ($(evt.from).hasClass('child')) {
+                                let parentId = $(evt.from).data('key')
+                                let parent = window.menuItems.find(m => m.pageId == parentId)
+                                swap(parent.children, evt.newIndex, evt.oldIndex)
+                            } else {
+                                swap(window.menuItems, evt.newIndex, evt.oldIndex)
+                            }
+                            let renames = []
+                            let parentCounter = 1
+                            window.menuItems.forEach(m => {
+                                let newName = renameMenu(m.fullPath, m.nameView, parentCounter++)
+                                if (m.fullPath != newName) {
+                                    renames.push([m.fullPath, newName])
+                                }
+                                let childCounter = 1
+                                m.children.forEach(c => {
+                                    newName = renameMenu(c.fullPath, c.nameView, childCounter++)
+                                    if (c.fullPath != newName) {
+                                        renames.push([c.fullPath, newName])
+                                    }
+                                })
+                            })
+
+                            axios.post("/admin/api/pages/rename", {
+                                renames: renames
+                            })
+                                .then((res) => {
+                                    window.menuItems = res.data
+                                })
+                                .catch((err) => {
+
+                                })
+                                .then(() => {
+                                    hideLoader()
+                                })
                         }
                     });
                 }
-
-                // new Sortable(document.getElementById("menu-items"), {
-                //          animation: 150
-                //      });
             })
             .catch((err) => {
                 console.log(err)
@@ -155,5 +193,12 @@
             .then(() => {
                 hideLoader()
             })
+
+        function renameMenu(fullPath, nameView, order) {
+            const ord = order < 10 ? `0${order}` : `${order}`
+            let regEx = new RegExp('\\\\(\\d\\d)\\.(' + nameView + ')', 'gi')
+            let res = fullPath.replace(regEx, `\\${ord}.$2`)
+            return res
+        }
     </script>
 </section>
