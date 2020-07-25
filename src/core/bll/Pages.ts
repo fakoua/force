@@ -1,5 +1,5 @@
 import { join } from "https://deno.land/std/path/mod.ts"
-import { readFileStr, walk } from "https://deno.land/std@0.61.0/fs/mod.ts"
+import { walk } from "https://deno.land/std/fs/mod.ts"
 import { PageModel } from "../models/page/PageModel.ts"
 import * as utils from "../../utils.ts"
 import { SectionModel } from "../models/page/SectionModel.ts"
@@ -7,13 +7,13 @@ import { PageHeadModel } from "../models/page/PageHeadModel.ts"
 
 export async function getTheme(): Promise<string> {
     const themePath = join(utils.rootFolder(), "src/cms/themes/newton/layout.html")
-    const result = await readFileStr(themePath)
+    const result = await Deno.readTextFile(themePath)
     return result
 }
 
 export async function getPage(url: URL): Promise<PageModel> {
     const filePath = await urlToFilePath(url)
-    let content = await readFileStr(filePath)
+    let content = await Deno.readTextFile(filePath)
     const regexSections = /\<section name\=\"(.*?)\"\>(.*?)(\<\/section\>)/gis
 
     const pageHeader = getPageHeader(content)

@@ -1,4 +1,4 @@
-import { walk, readFileStr } from "https://deno.land/std@0.61.0/fs/mod.ts"
+import { walk } from "https://deno.land/std/fs/mod.ts"
 import { join } from "https://deno.land/std/path/mod.ts"
 import { MenuModel } from "../models/MenuModel.ts"
 import * as Pages from "./Pages.ts"
@@ -21,10 +21,11 @@ export async function getMenuItems(path?: string): Promise<MenuModel[]> {
         const relativePath = folder.path.replace(rootFolder, "")
         const name = folder.name
         const nameView = name.replace(/\d\d\./gm, "")
-        const url = "/" + relativePath.replace(/\d\d\./gm, "").replace(/\\/gm, "/")
+        let url = "/" + relativePath.replace(/\d\d\./gm, "").replace(/\\/gm, "/")
+        url = url === "/home" ? "/" : url
         const relativePathView = relativePath.replace(/\d\d\./gm, "").replace(/\\/, " \\ ")
         if (root !== fullPath) {
-            const content = await readFileStr(join(fullPath, "index.html"))
+            const content = await Deno.readTextFile(join(fullPath, "index.html"))
             const pageHeader = Pages.getPageHeader(content)
             const children = await getMenuItems(fullPath)
             menuItems.push({

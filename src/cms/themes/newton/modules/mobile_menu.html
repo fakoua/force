@@ -1,0 +1,27 @@
+{{#each menu}}
+{{#unless hidden}}
+<li>
+    {{#unless children.length }}
+    <a href="{{url}}" data-target="m-{{pageId}}" class="waves-effect waves-blue"><i class="material-icons left">{{icon}}</i>{{menuTitle}}</a>
+    {{/unless}}
+    {{#if children.length }}
+<li class="bold">
+    <ul class="collapsible">
+        <li>
+            <a class="collapsible-header waves-effect waves-blue" tabindex="0"><i class="material-icons left">{{icon}}</i>{{this.menuTitle}}</a>
+            <div class="collapsible-body">
+                <ul>
+                    {{#each children}}
+                    {{#unless this.hidden}}
+                        <li><a href="{{this.url}}" class="waves-effect waves-blue"><i class="material-icons left">{{this.icon}}</i>{{this.menuTitle}}</a></li>
+                    {{/unless}}
+                    {{/each}}
+                </ul>
+            </div>
+        </li>
+    </ul>
+</li>
+{{/if}}
+</li>
+{{/unless}}
+{{/each}}

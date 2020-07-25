@@ -1,13 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0" />
   {{page.metatags}}
   <title>Force - {{page.head.pageTitle}}</title>
-
-  <!-- CSS  -->
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link href="/themes/newton/css/materialize.min.css" type="text/css" rel="stylesheet" media="screen,projection" />
   <link href="/themes/newton/css/style.css" type="text/css" rel="stylesheet" media="screen,projection" />
@@ -22,8 +19,7 @@
       </ul>
 
       <ul id="nav-mobile" class="sidenav">
-        <li><a href="sass.html"><i class="material-icons left">search</i>Link with Left Icon</a></li>
-        <li><a href="badges.html"><i class="material-icons left">view_module</i>Link with Right Icon</a></li>
+        {{mobile_menu}}
       </ul>
       <a href="#" data-target="nav-mobile" class="sidenav-trigger"><i class="material-icons">menu</i></a>
     </div>

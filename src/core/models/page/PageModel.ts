@@ -1,9 +1,12 @@
 import { PageHeadModel } from "./PageHeadModel.ts"
 import { SectionModel } from "./SectionModel.ts"
+import { ModuleModel } from "./ModuleModel.ts"
 
 export class PageModel {
     constructor(content?: string, head?: PageHeadModel, sections?: SectionModel) {
         this.content = content ?? ""
+        this.sections = sections
+        this.modules = {}
         this.head = head ?? {
             layout: "layout",
             pageTitle: "Force",
@@ -12,11 +15,12 @@ export class PageModel {
             icon: "",
             meta: []
         }
-        this.sections = sections
     }
+    
     content: string
     head: PageHeadModel
     sections?: SectionModel
+    modules: ModuleModel
     pageId?: string
 
     public get metatags(): string {

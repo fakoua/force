@@ -1,5 +1,5 @@
 import { join } from "https://deno.land/std/path/mod.ts"
-import { readFileStr, walk } from "https://deno.land/std@0.61.0/fs/mod.ts"
+import { walk } from "https://deno.land/std/fs/mod.ts"
 import { PageModel } from "./core/models/page/PageModel.ts"
 
 export function rootFolder(): string {
@@ -14,7 +14,7 @@ export function parseUrl(ctx: any): string[] {
 
 export async function getTheme(): Promise<string> {
     const themePath = join(Deno.cwd(), "src/cms/themes/newton/layout.html")
-    const result = await readFileStr(themePath)
+    const result = await Deno.readTextFile(themePath)
     return result
 }
 
@@ -66,7 +66,7 @@ export async function urlToFilePath(url: URL): Promise<string> {
 
 export async function processFile(url: URL): Promise<PageModel> {
     const filePath = await urlToFilePath(url)
-    const content = await readFileStr(filePath)
+    const content = await Deno.readTextFile(filePath)
     const regex: RegExp = /\<\!\-\-\s\@force(.*?)\-\-\>/gis
     let json: any
     const mt = regex.exec(content)
@@ -80,6 +80,14 @@ export async function processFile(url: URL): Promise<PageModel> {
 export async function processMenu(): Promise<string> {
     const root = join(Deno.cwd(), "src/cms/themes")
     const menuPath = join(root, "/newton/modules/menu.html")
-    const content = await readFileStr(menuPath)
+    const content = await Deno.readTextFile(menuPath)
     return content
 }
+
+export async function processMobileMenu(): Promise<string> {
+    const root = join(Deno.cwd(), "src/cms/themes")
+    const menuPath = join(root, "/newton/modules/mobile_menu.html")
+    const content = await Deno.readTextFile(menuPath)
+    return content
+}
+

@@ -139,6 +139,7 @@ router
         const page = await Pages.getPage(ctx.request.url)
         let html = await Pages.getTheme()
         let menu = await utils1.processMenu()
+        let mobileMenu = await utils1.processMobileMenu()
 
         const menuItems = await Menu.getMenuItems()
         const menuModel = {
@@ -146,9 +147,12 @@ router
         }
 
         menu = handle.render(menu, menuModel)
+        mobileMenu = handle.render(mobileMenu, menuModel)
+
         const model = {
             page: page,
-            menu: menu
+            menu: menu,
+            mobile_menu: mobileMenu
         }
 
         html = handle.render(html, model)

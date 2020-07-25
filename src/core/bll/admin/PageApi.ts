@@ -1,11 +1,10 @@
 import { join } from "https://deno.land/std/path/mod.ts"
-import { exists, readFileStr, writeFileStr } from "https://deno.land/std@0.61.0/fs/mod.ts"
 import { PageModel } from "../../models/page/PageModel.ts"
 import { SectionModel } from "../../models/page/SectionModel.ts"
 
 export async function getTheme(): Promise<string> {
     const themePath = join(Deno.cwd(), "src/core/admin/layout.html")
-    const result = await readFileStr(themePath)
+    const result = await Deno.readTextFile(themePath)
     return result
 }
 
@@ -27,7 +26,7 @@ export async function getPage(pageId: string): Promise<PageModel> {
     filePath = join(filePath, pageId)
     filePath = join(filePath, "index.html")
 
-    let content = await readFileStr(filePath)
+    let content = await Deno.readTextFile(filePath)
     const regexForce: RegExp = /\<\!\-\-\s\@force(.*?)\-\-\>/gis
 
     let json: any
@@ -53,7 +52,7 @@ ${force}
 -->
 ${model.content}
     `
-    await writeFileStr(filePath, fileContent)
+    await Deno.writeTextFile(filePath, fileContent)
     return true
 }
 
