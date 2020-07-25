@@ -3,3 +3,4 @@ tasks:
     command: /home/gitpod/.deno/bin/deno run -A --unstable mod.ts
 ports:
   - port: 9000
+    onOpen: open-preview
