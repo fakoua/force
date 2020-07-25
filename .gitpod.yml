@@ -1,5 +1,5 @@
 tasks:
   - init: curl -fsSL https://deno.land/x/install/install.sh | sh
-  - command: /home/gitpod/.deno/bin/deno run -A --unstable mod.ts
+    command: /home/gitpod/.deno/bin/deno run -A --unstable mod.ts
 ports:
   - port: 9000
