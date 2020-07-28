@@ -7,7 +7,6 @@ import * as utils from "../../utils.ts"
 export async function getMenuItems(path?: string): Promise<MenuModel[]> {
     const rootFolder = join(utils.rootFolder(), "src/cms/pages/")
     const root = path === undefined ? rootFolder : path
-
     const folders = walk(root, {
         includeDirs: true,
         includeFiles: false,
@@ -21,9 +20,9 @@ export async function getMenuItems(path?: string): Promise<MenuModel[]> {
         const relativePath = folder.path.replace(rootFolder, "")
         const name = folder.name
         const nameView = name.replace(/\d\d\./gm, "")
-        let url = "/" + relativePath.replace(/\d\d\./gm, "").replace(/\\/gm, "/")
+        let url = "/" + relativePath.replace(/\d\d\./gm, "")
         url = url === "/home" ? "/" : url
-        const relativePathView = relativePath.replace(/\d\d\./gm, "").replace(/\\/, " \\ ")
+        const relativePathView = relativePath.replace(/\d\d\./gm, "").replace(/\\/g, " \\ ").replace(/\//g, " / ")
         if (root !== fullPath) {
             const content = await Deno.readTextFile(join(fullPath, "index.html"))
             const pageHeader = Pages.getPageHeader(content)

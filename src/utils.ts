@@ -5,6 +5,11 @@ import { PageModel } from "./core/models/page/PageModel.ts"
 export function rootFolder(): string {
     return Deno.cwd()
 }
+
+export function unifiedPath(path: string): string {
+    return path.replace(/\\/g, "/")
+}
+
 export function parseUrl(ctx: any): string[] {
     const pathname = ctx.request.url.pathname as string
     const paths = pathname.split("/")
