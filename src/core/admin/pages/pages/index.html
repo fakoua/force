@@ -178,7 +178,6 @@
                                     window.menuItems = res.data
                                 })
                                 .catch((err) => {
-
                                 })
                                 .then(() => {
                                     hideLoader()
@@ -196,8 +195,8 @@
 
         function renameMenu(fullPath, nameView, order) {
             const ord = order < 10 ? `0${order}` : `${order}`
-            let regEx = new RegExp('\\\\(\\d\\d)\\.(' + nameView + ')', 'gi')
-            let res = fullPath.replace(regEx, `\\${ord}.$2`)
+            let regEx = new RegExp(glob.pathSep + '(\\d\\d)\\.(' + nameView + ')', 'gi')
+            let res = fullPath.replace(regEx, `${glob.pathSep}${ord}.$2`)
             return res
         }
     </script>

@@ -61,7 +61,6 @@ router
 
 // static
 app.use(async (context, next: any) => {
-    console.log("------------------------------------------------------------------------")
     if (context.request.url.pathname.startsWith("/themes")) {
         await send(context, context.request.url.pathname, {
             root: `${Deno.cwd()}/src/cms/`,
@@ -121,12 +120,14 @@ router
         const pageId = ctx.request.url.searchParams.get("pageId") ?? ""
         const page = await AdminPages.getPage(ctx.request.url)
         let html = await AdminPages.getTheme()
+        let glob = AdminPages.getGlob()
         page.pageId = pageId
         if (page.head === undefined) {
             ctx.response.body = page.content
         } else {
             const model = {
-                page: page
+                page: page,
+                glob: glob,
             }
             html = handle.render(html, model)
             html = handle.render(html, model) // for the body page.

@@ -2,11 +2,19 @@ import { join } from "https://deno.land/std/path/mod.ts"
 import { exists} from "https://deno.land/std/fs/mod.ts"
 import { PageModel } from "../../models/page/PageModel.ts"
 import { SectionModel } from "../../models/page/SectionModel.ts"
+import { GlobModel } from "../../models/GlobModel.ts"
 
 export async function getTheme(): Promise<string> {
     const themePath = join(Deno.cwd(), "src/core/admin/layout.html")
     const result = await Deno.readTextFile(themePath)
     return result
+}
+
+export function getGlob(): GlobModel {
+    return {
+        os: Deno.build.os,
+        pathSep: Deno.build.os == "windows" ? "\\\\" : "/",
+    }
 }
 
 export async function getPage(url: URL | string): Promise<PageModel> {

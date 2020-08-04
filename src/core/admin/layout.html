@@ -1,11 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0" />
     <title>Force - {{page.head.pageTitle}}</title>
-
     <!-- CSS  -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="/admin/content/css/admin-materialize.min.css" type="text/css" rel="stylesheet"
@@ -161,6 +159,11 @@
             }); // end of document ready
         })(jQuery); // end of jQuery name space
 
+        let glob = {
+            os: '{{glob.os}}',
+            pathSep: '{{glob.pathSep}}'
+        }
+
         function hideLoader() {
             $('#content-container').css('filter', 'blur(0px)')
             $('.preloader-background').delay(200).fadeOut(600);
@@ -177,5 +180,4 @@
     </script>
     {{page.sections.script}}
 </body>
-
 </html>
