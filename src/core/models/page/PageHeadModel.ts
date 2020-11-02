@@ -1,4 +1,4 @@
-import { MetatagModel } from "./MetatagModel.ts"
+import type { MetatagModel } from "./MetatagModel.ts"
 
 export interface PageHeadModel {
     pageTitle: string,

@@ -116,11 +116,18 @@ router
     })
 
 router
+    .get("/admin/api/pages/roots", async (ctx: Context) => {
+        const body = ctx.request.body()
+        const res = await Menu.getMenuRoots()
+        ctx.response.body = res
+    })
+
+router
     .all("/admin/(.*)", async (ctx: Context) => {
         const pageId = ctx.request.url.searchParams.get("pageId") ?? ""
         const page = await AdminPages.getPage(ctx.request.url)
         let html = await AdminPages.getTheme()
-        let glob = AdminPages.getGlob()
+        let glob = utils1.getGlob()
         page.pageId = pageId
         if (page.head === undefined) {
             ctx.response.body = page.content

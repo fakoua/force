@@ -1,6 +1,7 @@
 import { join } from "https://deno.land/std/path/mod.ts"
 import { walk } from "https://deno.land/std/fs/mod.ts"
 import { PageModel } from "./core/models/page/PageModel.ts"
+import type { GlobModel } from "./core/models/GlobModel.ts"
 
 export function rootFolder(): string {
     return Deno.cwd()
@@ -96,3 +97,10 @@ export async function processMobileMenu(): Promise<string> {
     return content
 }
 
+export function getGlob(): GlobModel {
+    return {
+        os: Deno.build.os,
+        pathSep: Deno.build.os == "windows" ? "\\" : "/",
+        pathSepJs: Deno.build.os == "windows" ? "\\\\" : "/",
+    }
+}

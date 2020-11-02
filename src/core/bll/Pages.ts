@@ -2,8 +2,8 @@ import { join } from "https://deno.land/std/path/mod.ts"
 import { walk } from "https://deno.land/std/fs/mod.ts"
 import { PageModel } from "../models/page/PageModel.ts"
 import * as utils from "../../utils.ts"
-import { SectionModel } from "../models/page/SectionModel.ts"
-import { PageHeadModel } from "../models/page/PageHeadModel.ts"
+import type { SectionModel } from "../models/page/SectionModel.ts"
+import type { PageHeadModel } from "../models/page/PageHeadModel.ts"
 
 export async function getTheme(): Promise<string> {
     const themePath = join(utils.rootFolder(), "src/cms/themes/newton/layout.html")

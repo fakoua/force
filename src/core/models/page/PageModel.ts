@@ -1,12 +1,14 @@
-import { PageHeadModel } from "./PageHeadModel.ts"
-import { SectionModel } from "./SectionModel.ts"
-import { ModuleModel } from "./ModuleModel.ts"
+import type { PageHeadModel } from "./PageHeadModel.ts"
+import type { SectionModel } from "./SectionModel.ts"
+import type { ModuleModel } from "./ModuleModel.ts"
 
 export class PageModel {
-    constructor(content?: string, head?: PageHeadModel, sections?: SectionModel) {
+    constructor(content?: string, head?: PageHeadModel, sections?: SectionModel, parent?: string) {
         this.content = content ?? ""
         this.sections = sections
         this.modules = {}
+        this.parent = parent ?? ""
+        this.hasChildren = false
         this.head = head ?? {
             layout: "layout",
             pageTitle: "Force",
@@ -18,10 +20,12 @@ export class PageModel {
     }
     
     content: string
+    parent: string
     head: PageHeadModel
     sections?: SectionModel
     modules: ModuleModel
     pageId?: string
+    hasChildren: boolean
 
     public get metatags(): string {
         if (this.head.meta !== undefined) {

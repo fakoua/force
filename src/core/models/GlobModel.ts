@@ -1,4 +1,5 @@
 export interface GlobModel {
     os: string,
-    pathSep: string
+    pathSep: string,
+    pathSepJs: string
 }

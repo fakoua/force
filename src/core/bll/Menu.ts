@@ -1,6 +1,6 @@
 import { walk } from "https://deno.land/std/fs/mod.ts"
 import { join } from "https://deno.land/std/path/mod.ts"
-import { MenuModel } from "../models/MenuModel.ts"
+import type { MenuModel } from "../models/MenuModel.ts"
 import * as Pages from "./Pages.ts"
 import * as utils from "../../utils.ts"
 
@@ -56,4 +56,21 @@ export async function getMenuItems(path?: string): Promise<MenuModel[]> {
     })
 
     return menuItems
+}
+
+export async function getMenuRoots(): Promise<string[]> {
+    const rootFolder = join(utils.rootFolder(), "src/cms/pages/")
+    const folders = walk(rootFolder, {
+        includeDirs: true,
+        includeFiles: false,
+        maxDepth: 1
+    })
+
+    const roots: string[] = []
+
+    for await (const folder of folders) {
+        roots.push(folder.name == "pages" ? "- ROOT -" : folder.name)
+    }
+
+    return roots
 }

@@ -94,6 +94,7 @@ export async function savePage(model: PageModel): Promise<boolean> {
     let filePath = join(Deno.cwd(), "src/cms/pages")
     filePath = join(filePath, path)
     filePath = join(filePath, "index.html")
+    console.log(model)
     const force = JSON.stringify(model.head)
     const fileContent = `
 <!-- @force

@@ -1,6 +1,6 @@
 import { join } from "https://deno.land/std/path/mod.ts"
 import { PageModel } from "../../models/page/PageModel.ts"
-import { SectionModel } from "../../models/page/SectionModel.ts"
+import * as utils from "../../../utils.ts"
 
 export async function getTheme(): Promise<string> {
     const themePath = join(Deno.cwd(), "src/core/admin/layout.html")
@@ -17,10 +17,12 @@ export async function getPage(pageId: string): Promise<PageModel> {
             pageTitle: "",
             hidden: false, 
             icon: "",
-            meta: []
+            meta: [],
         })
     }
-
+    
+    const paths = pageId.split(utils.getGlob().pathSep)
+    const parent = paths.length == 1 ? "- ROOT -" : paths[0]
     let filePath: string
     filePath = join(Deno.cwd(), "src/cms/pages")
     filePath = join(filePath, pageId)
@@ -37,7 +39,7 @@ export async function getPage(pageId: string): Promise<PageModel> {
     }
 
     content = content.replace(/^\s+|\s+$/g, "")
-    return new PageModel(content, json, {})
+    return new PageModel(content, json, {}, parent)
 }
 
 export async function savePage(model: PageModel): Promise<boolean> {

@@ -87,9 +87,14 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="input-field col s10">
+                    <div class="input-field col s6">
                         <input id="menu-title" type="text" class="validate" />
                         <label for="menu-title">Menu Title</label>
+                    </div>
+                    <div class="input-field col s4">
+                        <select data-bind="options: roots, selectedOptions: selected">
+                        </select>
+                        <label>Parent</label>
                     </div>
                     <div class="input-field col s2">
                         <input id="icon" type="text" class="validate" />
@@ -120,7 +125,6 @@
         crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/uuid/8.2.0/uuidv4.min.js"></script>
     <script>
-
         function insertMeta(meta) {
             let uid = uuidv4()
             const template = `<li class="collection-item" id="${uid}">
@@ -187,10 +191,30 @@
             });
         })
 
+        function getRoots() {
+            axios.get(`/admin/api/pages/roots`)
+                .then((res) => {
+                    let viewModel = {
+                        roots: ko.observableArray(res.data),
+                        selected: ko.observableArray([window.model.parent])
+                    };
+                    ko.applyBindings(viewModel);
+                    $('select').formSelect();
+                })
+                .catch((err) => {
+
+                })
+                .then(() => {
+                    hideLoader()
+                })
+        }
+
         function getPage() {
             let pageId = encodeURIComponent($('#page-id').val())
             axios.get(`/admin/api/pages/get?pageId=${pageId}`)
                 .then((res) => {
+                    window.model = res.data
+                    console.log(window.model)
                     $('#page-title').val(res.data.head.pageTitle)
                     $('#menu-title').val(res.data.head.menuTitle)
                     $('#icon').val(res.data.head.icon)
@@ -198,7 +222,7 @@
                     $('#editor').trumbowyg('html', res.data.content)
                     buildMeta(res.data.head.meta)
                     M.updateTextFields()
-                    hideLoader()
+                    getRoots()
                 })
                 .catch((err) => {
 
